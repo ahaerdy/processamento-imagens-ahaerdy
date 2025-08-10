@@ -1,6 +1,6 @@
 # processamento-imagens
 
-Projeto de um pacote Python para processamento de imagens, implementando funções para aplicar filtros (preto e branco) e transformações (redimensionamento), utilizando a biblioteca Pillow. O pacote foi desenvolvido com setuptools para publicação no Test PyPI bem como no PyPI, incluindo scripts de teste para validação funcional das funcionalidades implementadas.
+Projeto de um pacote Python para processamento de imagens, implementando funções para aplicar filtros (preto e branco) e transformações (redimensionamento), utilizando a biblioteca Pillow. O pacote foi desenvolvido com setuptools para publicação no Test PyPI e no PyPI, incluindo scripts de teste para validação funcional das funcionalidades implementadas.
 
 ## Instalação
 ```bash
