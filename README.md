@@ -1,10 +1,10 @@
-# 🖼️ processamento-imagens
+# processamento-imagens
 
 > **Pacote Python para processamento de imagens** — implementando filtros e transformações com [Pillow](https://python-pillow.org/), publicado no [Test PyPI](https://test.pypi.org/) e no [PyPI](https://pypi.org/). Projeto desenvolvido como parte do bootcamp da [DIO](https://www.dio.me/).
 
 ---
 
-## 📋 Índice
+## Índice
 
 1. [Visão Geral](#visão-geral)
 2. [Estrutura do Repositório](#estrutura-do-repositório)
@@ -64,7 +64,7 @@ processamento-imagens-ahaerdy/
 └── LICENSE                         # Licença do projeto
 ```
 
-> 💡 **Convenção de nomes:** o diretório do pacote utiliza `_` (underline) — `processamento_imagens` — pois Python não permite `-` em nomes de módulos. O repositório Git usa `-` (hífen) por convenção de URLs.
+> **Convenção de nomes:** o diretório do pacote utiliza `_` (underline) — `processamento_imagens` — pois Python não permite `-` em nomes de módulos. O repositório Git usa `-` (hífen) por convenção de URLs.
 
 ---
 
@@ -343,8 +343,6 @@ A seguir, a demonstração visual das transformações aplicadas sobre a imagem 
 
 ### Imagem Original — `green_forest.jpg`
 
-> 📌 **Inserir aqui:** `tests/green_forest.jpg`
-
 ![green_forest.jpg](tests/green_forest.jpg)
 
 *Imagem original colorida de uma floresta. Dimensões originais: 640×426 px (aprox.). Formato: JPEG.*
@@ -353,8 +351,6 @@ A seguir, a demonstração visual das transformações aplicadas sobre a imagem 
 
 ### Após `aplicar_filtro_pb()` — `green_forest_pb.jpg`
 
-> 📌 **Inserir aqui:** `tests/green_forest_pb.jpg`
-
 ![green_forest_pb.jpg](tests/green_forest_pb.jpg)
 
 *Resultado da conversão para escala de cinza (modo `"L"` do Pillow). Observe que todos os canais RGB foram combinados em um único canal de luminância, preservando os 256 tons de cinza.*
@@ -362,8 +358,6 @@ A seguir, a demonstração visual das transformações aplicadas sobre a imagem 
 ---
 
 ### Após `redimensionar(200, 200)` — `green_forest_redim.jpg`
-
-> 📌 **Inserir aqui:** `tests/green_forest_redim.jpg`
 
 ![green_forest_redim.jpg](tests/green_forest_redim.jpg)
 
@@ -463,7 +457,8 @@ twine upload dist/*
 - [Test PyPI](https://test.pypi.org/)
 - [PyPI](https://pypi.org/)
 - [DIO — Digital Innovation One](https://www.dio.me/)
-- [Repositório GitHub do projeto](https://github.com/ahaerdy/processamento-imagens-ahaerdy)
+- [Repositório de Estudos — Bootcamp Suzano Python Developer](https://github.com/ahaerdy/DIO-learning/tree/main/Suzano%20-%20Python%20Developer)
+- [Repositório de Estudos — Bootcamp NTT DATA: Engenharia de Dados com Python](https://github.com/ahaerdy/DIO-learning/tree/main/NTT%20DATA-Engenharia%20de%20Dados%20com%20Python)
 
 ---
 
