@@ -430,8 +430,6 @@ dist/
 twine upload --repository testpypi dist/*
 ```
 
-> Acesse [https://test.pypi.org/project/processamento-imagens/](https://test.pypi.org/project/processamento-imagens/) para verificar a página do pacote.
-
 ### 4. Validação da instalação a partir do Test PyPI
 
 ```bash
@@ -456,12 +454,5 @@ twine upload dist/*
 - [Python Packaging User Guide — PyPA](https://packaging.python.org/en/latest/)
 - [Test PyPI](https://test.pypi.org/)
 - [PyPI](https://pypi.org/)
-- [DIO — Digital Innovation One](https://www.dio.me/)
 - [Repositório de Estudos — Bootcamp Suzano Python Developer](https://github.com/ahaerdy/DIO-learning/tree/main/Suzano%20-%20Python%20Developer)
 - [Repositório de Estudos — Bootcamp NTT DATA: Engenharia de Dados com Python](https://github.com/ahaerdy/DIO-learning/tree/main/NTT%20DATA-Engenharia%20de%20Dados%20com%20Python)
-
----
-
-<p align="center">
-  Desenvolvido por <strong>ahaerdy</strong> · Projeto DIO · Python + Pillow + PyPI
-</p>
