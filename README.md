@@ -1,525 +1,472 @@
-# 🏦 Modelando o Sistema Bancário em POO com Python
+# 🖼️ processamento-imagens
 
-Projeto desenvolvido como desafio prático do **Bootcamp Suzano Python Developer** na plataforma [DIO](https://web.dio.me), dentro do módulo de Programação Orientada a Objetos com Python.
-
-Esta é a **terceira versão** do Sistema Bancário. As versões anteriores foram desenvolvidas com código procedural e depois com funções. Aqui, toda a lógica é reorganizada em **classes e objetos**, aplicando os pilares da POO: **abstração**, **encapsulamento**, **herança** e **polimorfismo**.
+> **Pacote Python para processamento de imagens** — implementando filtros e transformações com [Pillow](https://python-pillow.org/), publicado no [Test PyPI](https://test.pypi.org/) e no [PyPI](https://pypi.org/). Projeto desenvolvido como parte do bootcamp da [DIO](https://www.dio.me/).
 
 ---
 
-## Curso
+## 📋 Índice
 
-- **Curso:** "Modelando o Sistema Bancário em POO com Python"
-- **Instrutor:** Guilherme Arthur de Carvalho (Analista de Sistemas)
-  - [LinkedIn](https://www.linkedin.com/in/decarvalhogui/)
-- **Repositório de estudos geral:** [Bootcamp Suzano Python Developer](https://github.com/ahaerdy/DIO-learning/tree/main/Suzano%20-%20Python%20Developer)
-
----
-
-## Objetivo
-
-Refatorar o sistema bancário [anterior](https://github.com/ahaerdy/DIO-projeto-sistema-bancario-com-funcoes-python), substituindo variáveis soltas e dicionários por uma **modelagem completa com classes e objetos**. O desafio é dividido em duas partes:
-
-- **Parte 1** (`desafio-parte_1.py`): Modelagem das classes do domínio do sistema — clientes, contas, transações e histórico.
-- **Parte 2** (`desafio_parte_2.py`): Integração das classes ao menu interativo, conectando a interface com o usuário à lógica encapsulada nos objetos.
-
----
-
-## Funcionalidades
-
-| Opção | Operação | Descrição |
-|-------|----------|-----------|
-| `d` | Depositar | Registra um depósito na conta do cliente |
-| `s` | Sacar | Realiza saque com validações de limite e saldo |
-| `e` | Extrato | Exibe histórico de transações e saldo atual |
-| `nu` | Novo usuário | Cadastra um cliente pelo CPF |
-| `nc` | Nova conta | Vincula uma conta corrente a um cliente |
-| `lc` | Listar contas | Exibe todas as contas criadas |
-| `q` | Sair | Encerra o programa |
+1. [Visão Geral](#visão-geral)
+2. [Estrutura do Repositório](#estrutura-do-repositório)
+3. [Tecnologias Utilizadas](#tecnologias-utilizadas)
+4. [Instalação](#instalação)
+5. [Código-Fonte Detalhado](#código-fonte-detalhado)
+   - [\_\_init\_\_.py](#__init__py)
+   - [filtros.py](#filtrospy)
+   - [transformacoes.py](#transformacoespy)
+6. [Uso](#uso)
+7. [Testes](#testes)
+   - [test_basico.py](#test_basicopy)
+   - [test_processamento_imagens_ahaerdy.py](#test_processamento_imagens_ahaerdypy)
+8. [Resultados Visuais](#resultados-visuais)
+9. [Publicação no PyPI](#publicação-no-pypi)
+10. [Referências](#referências)
 
 ---
 
-## Como o Projeto Foi Desenvolvido
+## Visão Geral
 
-### Da estrutura procedural à orientação a objetos
+O **processamento-imagens** é um pacote Python minimalista e didático que demonstra como encapsular funcionalidades de processamento de imagens em um módulo reutilizável e distribuível. O projeto cobre o ciclo completo de desenvolvimento de um pacote Python:
 
-Nas versões anteriores, o estado do sistema (saldo, extrato, número de saques) era mantido em variáveis simples dentro de um loop. Com POO, esse estado passa a viver **dentro dos objetos**, que também carregam os comportamentos associados. Cada entidade do mundo real — cliente, conta, transação — vira uma classe com responsabilidades bem definidas.
+- **Desenvolvimento** do código com boas práticas de orientação a funções e documentação (`docstrings`).
+- **Empacotamento** com `setuptools` e geração de distribuições (`sdist` e `wheel`).
+- **Publicação** no Test PyPI (ambiente de homologação) e, após validação, no PyPI oficial.
+- **Testes** com scripts de validação funcional e de importação.
 
----
+As funcionalidades implementadas são:
 
-## Parte 1 — Modelagem das Classes
-
-### 1. Classes `Cliente` e `PessoaFisica` — hierarquia de clientes
-
-```python
-class Cliente:
-    def __init__(self, endereco):
-        self.endereco = endereco
-        self.contas = []
-
-    def realizar_transacao(self, conta, transacao):
-        transacao.registrar(conta)
-
-    def adicionar_conta(self, conta):
-        self.contas.append(conta)
-
-
-class PessoaFisica(Cliente):
-    def __init__(self, nome, data_nascimento, cpf, endereco):
-        super().__init__(endereco)
-        self.nome = nome
-        self.data_nascimento = data_nascimento
-        self.cpf = cpf
-```
-
-**Como funciona:**
-
-`Cliente` é a classe base que representa qualquer tipo de cliente do banco. Ela armazena o endereço e uma lista de contas vinculadas ao cliente, além de definir dois comportamentos: realizar uma transação e adicionar uma conta.
-
-`PessoaFisica` **herda** de `Cliente` via `super().__init__(endereco)`, reaproveitando toda a inicialização da classe pai e acrescentando os atributos específicos de uma pessoa física: nome, CPF e data de nascimento.
-
-Essa separação prepara o sistema para evoluções futuras — como adicionar `PessoaJuridica` — sem alterar o código existente.
-
-O método `realizar_transacao` delega a execução ao próprio objeto de transação:
-
-```python
-def realizar_transacao(self, conta, transacao):
-    transacao.registrar(conta)
-```
-
-Isso é **polimorfismo**: o cliente não precisa saber se a transação é um saque ou um depósito — ele apenas chama `registrar()`, e cada tipo de transação sabe o que fazer.
+| Função | Descrição |
+|---|---|
+| `aplicar_filtro_pb` | Converte uma imagem colorida para escala de cinza (preto e branco) |
+| `redimensionar` | Redimensiona uma imagem para largura e altura especificadas |
 
 ---
 
-### 2. Classes `Conta` e `ContaCorrente` — hierarquia de contas
+## Estrutura do Repositório
 
-```python
-class Conta:
-    def __init__(self, numero, cliente):
-        self._saldo = 0
-        self._numero = numero
-        self._agencia = "0001"
-        self._cliente = cliente
-        self._historico = Historico()
-
-    @classmethod
-    def nova_conta(cls, cliente, numero):
-        return cls(numero, cliente)
-
-    @property
-    def saldo(self):
-        return self._saldo
-
-    # ... demais propriedades
-
-    def sacar(self, valor):
-        excedeu_saldo = valor > self.saldo
-        if excedeu_saldo:
-            print("\n@@@ Operação falhou! Você não tem saldo suficiente. @@@")
-        elif valor > 0:
-            self._saldo -= valor
-            print("\n=== Saque realizado com sucesso! ===")
-            return True
-        else:
-            print("\n@@@ Operação falhou! O valor informado é inválido. @@@")
-        return False
-
-    def depositar(self, valor):
-        if valor > 0:
-            self._saldo += valor
-            print("\n=== Depósito realizado com sucesso! ===")
-            return True
-        else:
-            print("\n@@@ Operação falhou! O valor informado é inválido. @@@")
-            return False
+```
+processamento-imagens-ahaerdy/
+│
+├── processamento_imagens/          # Pacote principal
+│   ├── __init__.py                 # Ponto de entrada do pacote; exporta as funções públicas
+│   ├── filtros.py                  # Módulo de filtros (ex.: preto e branco)
+│   └── transformacoes.py           # Módulo de transformações (ex.: redimensionamento)
+│
+├── tests/                          # Diretório de testes e assets
+│   ├── green_forest.jpg            # Imagem de entrada usada nos testes
+│   ├── green_forest_pb.jpg         # Saída esperada: imagem em preto e branco
+│   ├── green_forest_redim.jpg      # Saída esperada: imagem redimensionada (200×200 px)
+│   ├── test_basico.py              # Teste de importação das funções do pacote
+│   └── test_processamento_imagens_ahaerdy.py  # Teste funcional completo
+│
+├── setup.py / pyproject.toml       # Configuração do pacote para distribuição
+├── README.md                       # Documentação do projeto (este arquivo)
+└── LICENSE                         # Licença do projeto
 ```
 
-**Como funciona:**
-
-Os atributos prefixados com `_` (como `_saldo`, `_numero`) seguem a convenção Python de **encapsulamento**: indicam que são de uso interno da classe e não devem ser acessados diretamente de fora. O acesso externo é feito exclusivamente via **properties** (`@property`), que funcionam como getters somente-leitura:
-
-```python
-@property
-def saldo(self):
-    return self._saldo
-```
-
-O método de classe `nova_conta` é um **factory method**: uma forma alternativa de construir objetos sem chamar `__init__` diretamente. Ele usa `cls` (referência à própria classe) para criar instâncias, o que permite que subclasses o reutilizem corretamente.
-
-Os métodos `sacar` e `depositar` retornam `True` ou `False` para indicar se a operação foi bem-sucedida — isso permite que quem chamou o método tome decisões com base no resultado.
+> 💡 **Convenção de nomes:** o diretório do pacote utiliza `_` (underline) — `processamento_imagens` — pois Python não permite `-` em nomes de módulos. O repositório Git usa `-` (hífen) por convenção de URLs.
 
 ---
 
-```python
-class ContaCorrente(Conta):
-    def __init__(self, numero, cliente, limite=500, limite_saques=3):
-        super().__init__(numero, cliente)
-        self._limite = limite
-        self._limite_saques = limite_saques
+## Tecnologias Utilizadas
 
-    def sacar(self, valor):
-        numero_saques = len(
-            [t for t in self.historico.transacoes if t["tipo"] == Saque.__name__]
-        )
-        excedeu_limite = valor > self._limite
-        excedeu_saques = numero_saques >= self._limite_saques
-
-        if excedeu_limite:
-            print("\n@@@ Operação falhou! O valor do saque excede o limite. @@@")
-        elif excedeu_saques:
-            print("\n@@@ Operação falhou! Número máximo de saques excedido. @@@")
-        else:
-            return super().sacar(valor)
-
-        return False
-
-    def __str__(self):
-        return f"""\
-            Agência:\t{self.agencia}
-            C/C:\t\t{self.numero}
-            Titular:\t{self.cliente.nome}
-        """
-```
-
-**Como funciona:**
-
-`ContaCorrente` **especializa** `Conta` adicionando dois novos atributos: limite por saque (padrão R$ 500,00) e limite de saques diários (padrão 3). Ela **sobrescreve** o método `sacar` para incluir essas validações extras antes de chamar o comportamento original via `super().sacar(valor)`.
-
-O número de saques já realizados é calculado em tempo real consultando o histórico — sem precisar de um contador separado:
-
-```python
-numero_saques = len(
-    [t for t in self.historico.transacoes if t["tipo"] == Saque.__name__]
-)
-```
-
-O método `__str__` define como o objeto deve ser representado como texto, permitindo que `print(conta)` exiba os dados formatados corretamente — sem necessidade de código extra em quem chama.
+| Tecnologia | Versão mínima | Finalidade |
+|---|---|---|
+| Python | 3.8+ | Linguagem principal |
+| [Pillow](https://python-pillow.org/) | Qualquer recente | Manipulação de imagens (open, convert, resize, save) |
+| [setuptools](https://setuptools.pypa.io/) | — | Empacotamento e geração de distribuições |
+| [pip](https://pip.pypa.io/) | — | Instalação de dependências e do próprio pacote |
+| [twine](https://twine.readthedocs.io/) | — | Upload seguro das distribuições para o PyPI |
 
 ---
 
-### 3. Classe `Historico` — registro de transações
+## Instalação
 
-```python
-class Historico:
-    def __init__(self):
-        self._transacoes = []
+### Opção 1 — Via PyPI (produção)
 
-    @property
-    def transacoes(self):
-        return self._transacoes
-
-    def adicionar_transacao(self, transacao):
-        self._transacoes.append(
-            {
-                "tipo": transacao.__class__.__name__,
-                "valor": transacao.valor,
-                "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s"),
-            }
-        )
+```bash
+pip install processamento-imagens
 ```
 
-**Como funciona:**
+### Opção 2 — Via Test PyPI (homologação)
 
-Cada `Conta` possui seu próprio objeto `Historico`, criado automaticamente no `__init__` da classe `Conta`. Toda transação bem-sucedida é registrada aqui como um dicionário com três campos: tipo, valor e data/hora.
-
-O tipo é obtido via `transacao.__class__.__name__` — que retorna o nome da classe da instância como string (`"Saque"` ou `"Deposito"`). Isso evita hardcode de strings e garante que o registro reflita sempre o tipo real do objeto.
-
----
-
-### 4. Classe abstrata `Transacao` e suas implementações
-
-```python
-from abc import ABC, abstractclassmethod, abstractproperty
-
-class Transacao(ABC):
-    @property
-    @abstractproperty
-    def valor(self):
-        pass
-
-    @abstractclassmethod
-    def registrar(self, conta):
-        pass
-
-
-class Saque(Transacao):
-    def __init__(self, valor):
-        self._valor = valor
-
-    @property
-    def valor(self):
-        return self._valor
-
-    def registrar(self, conta):
-        sucesso_transacao = conta.sacar(self.valor)
-        if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
-
-
-class Deposito(Transacao):
-    def __init__(self, valor):
-        self._valor = valor
-
-    @property
-    def valor(self):
-        return self._valor
-
-    def registrar(self, conta):
-        sucesso_transacao = conta.depositar(self.valor)
-        if sucesso_transacao:
-            conta.historico.adicionar_transacao(self)
+```bash
+pip install --index-url https://test.pypi.org/simple/ processamento-imagens
 ```
 
-**Como funciona:**
-
-`Transacao` é uma **classe abstrata** (herda de `ABC`). Ela define um contrato: qualquer classe que a herde **obrigatoriamente** deve implementar `valor` e `registrar`. Tentar instanciar `Transacao` diretamente gera erro — ela existe apenas para ser especializada.
-
-`Saque` e `Deposito` cumprem esse contrato. O método `registrar` em cada uma delas chama o método correspondente na conta (`sacar` ou `depositar`) e, somente se a operação foi bem-sucedida (retornou `True`), adiciona a transação ao histórico:
-
-```python
-def registrar(self, conta):
-    sucesso_transacao = conta.sacar(self.valor)
-    if sucesso_transacao:
-        conta.historico.adicionar_transacao(self)
-```
-
-Esse design garante que **nunca haja um registro no histórico de uma operação que falhou**.
-
----
-
-## Parte 2 — Integrando as Classes ao Menu
-
-### 5. Funções auxiliares de busca
-
-```python
-def filtrar_cliente(cpf, clientes):
-    clientes_filtrados = [cliente for cliente in clientes if cliente.cpf == cpf]
-    return clientes_filtrados[0] if clientes_filtrados else None
-
-def recuperar_conta_cliente(cliente):
-    if not cliente.contas:
-        print("\n@@@ Cliente não possui conta! @@@")
-        return
-    return cliente.contas[0]
-```
-
-**Como funciona:**
-
-`filtrar_cliente` usa **list comprehension** para varrer a lista de clientes e encontrar aquele cujo CPF coincide, retornando o objeto `PessoaFisica` ou `None`. Esse padrão é reutilizado por praticamente todas as operações do menu como primeira etapa de validação.
-
-`recuperar_conta_cliente` retorna a primeira conta do cliente. O comentário `# FIXME` presente no código original é uma anotação honesta do instrutor indicando uma limitação conhecida da versão atual — em versões futuras, o cliente poderia escolher entre suas contas.
-
----
-
-### 6. Funções de operação — depósito e saque
-
-```python
-def depositar(clientes):
-    cpf = input("Informe o CPF do cliente: ")
-    cliente = filtrar_cliente(cpf, clientes)
-    if not cliente:
-        print("\n@@@ Cliente não encontrado! @@@")
-        return
-
-    valor = float(input("Informe o valor do depósito: "))
-    transacao = Deposito(valor)
-
-    conta = recuperar_conta_cliente(cliente)
-    if not conta:
-        return
-
-    cliente.realizar_transacao(conta, transacao)
-```
-
-**Como funciona:**
-
-Cada operação segue o mesmo fluxo em três etapas: localizar o cliente pelo CPF, recuperar sua conta, e então criar um objeto de transação e delegá-lo ao cliente. Nenhuma validação de valor ou de saldo acontece aqui — isso é responsabilidade das classes `Deposito`, `Conta` e `ContaCorrente`. A função apenas **orquestra** os objetos.
-
-```python
-transacao = Deposito(valor)          # cria o objeto de transação
-cliente.realizar_transacao(conta, transacao)  # delega a execução
-```
-
-Internamente, `realizar_transacao` chama `transacao.registrar(conta)`, que por sua vez chama `conta.depositar(valor)`. Toda a lógica de negócio está encapsulada nas classes — a função do menu apenas conecta as peças.
-
-A função `sacar` segue exatamente o mesmo padrão, criando um objeto `Saque` no lugar de `Deposito`.
-
----
-
-### 7. Função `exibir_extrato`
-
-```python
-def exibir_extrato(clientes):
-    cpf = input("Informe o CPF do cliente: ")
-    cliente = filtrar_cliente(cpf, clientes)
-    if not cliente:
-        print("\n@@@ Cliente não encontrado! @@@")
-        return
-
-    conta = recuperar_conta_cliente(cliente)
-    if not conta:
-        return
-
-    print("\n================ EXTRATO ================")
-    transacoes = conta.historico.transacoes
-
-    extrato = ""
-    if not transacoes:
-        extrato = "Não foram realizadas movimentações."
-    else:
-        for transacao in transacoes:
-            extrato += f"\n{transacao['tipo']}:\n\tR$ {transacao['valor']:.2f}"
-
-    print(extrato)
-    print(f"\nSaldo:\n\tR$ {conta.saldo:.2f}")
-    print("==========================================")
-```
-
-**Como funciona:**
-
-O extrato é gerado percorrendo a lista `conta.historico.transacoes` — uma lista de dicionários, onde cada item contém `tipo`, `valor` e `data`. O acesso ao saldo é feito via `conta.saldo`, que aciona a `@property` definida em `Conta` e retorna `self._saldo` de forma controlada.
-
----
-
-### 8. Funções `criar_cliente` e `criar_conta`
-
-```python
-def criar_cliente(clientes):
-    cpf = input("Informe o CPF (somente número): ")
-    cliente = filtrar_cliente(cpf, clientes)
-    if cliente:
-        print("\n@@@ Já existe cliente com esse CPF! @@@")
-        return
-
-    nome = input("Informe o nome completo: ")
-    data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
-    endereco = input("Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
-
-    cliente = PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
-    clientes.append(cliente)
-    print("\n=== Cliente criado com sucesso! ===")
-
-
-def criar_conta(numero_conta, clientes, contas):
-    cpf = input("Informe o CPF do cliente: ")
-    cliente = filtrar_cliente(cpf, clientes)
-    if not cliente:
-        print("\n@@@ Cliente não encontrado, fluxo de criação de conta encerrado! @@@")
-        return
-
-    conta = ContaCorrente.nova_conta(cliente=cliente, numero=numero_conta)
-    contas.append(conta)
-    cliente.contas.append(conta)
-    print("\n=== Conta criada com sucesso! ===")
-```
-
-**Como funciona:**
-
-Em `criar_cliente`, a verificação de CPF duplicado é feita antes de coletar qualquer dado do usuário — economizando interações desnecessárias. O objeto `PessoaFisica` é criado com argumentos nomeados para maior clareza e adicionado à lista `clientes`.
-
-Em `criar_conta`, o método de classe `ContaCorrente.nova_conta(cliente, numero)` é utilizado para criar a instância — padrão factory method definido em `Conta`. A conta criada é adicionada tanto à lista global `contas` quanto à lista interna do próprio objeto `cliente.contas`, mantendo os dois registros sincronizados.
-
----
-
-### 9. Função `main()` — ponto de entrada
-
-```python
-def main():
-    clientes = []
-    contas = []
-
-    while True:
-        opcao = menu()
-
-        if opcao == "d":
-            depositar(clientes)
-        elif opcao == "s":
-            sacar(clientes)
-        elif opcao == "e":
-            exibir_extrato(clientes)
-        elif opcao == "nu":
-            criar_cliente(clientes)
-        elif opcao == "nc":
-            numero_conta = len(contas) + 1
-            criar_conta(numero_conta, clientes, contas)
-        elif opcao == "lc":
-            listar_contas(contas)
-        elif opcao == "q":
-            break
-        else:
-            print("\n@@@ Operação inválida, por favor selecione novamente a operação desejada. @@@")
-
-main()
-```
-
-**Como funciona:**
-
-`main()` mantém apenas duas listas — `clientes` e `contas` — e o loop de interação com o usuário. Todo o estado do sistema vive **dentro dos objetos**, não em variáveis soltas. A função apenas direciona cada opção do menu à função correspondente, que por sua vez acessa e manipula os objetos adequados.
-
----
-
-## Como Executar
-
-**Pré-requisito:** Python 3.10+ instalado.
+### Opção 3 — A partir do código-fonte
 
 ```bash
 # Clone o repositório
-git clone https://github.com/ahaerdy/DIO-projeto-sistema-bancario-em-poo-com-python.git
-cd DIO-projeto-sistema-bancario-em-poo-com-python
+git clone https://github.com/ahaerdy/processamento-imagens-ahaerdy.git
+cd processamento-imagens-ahaerdy
 
-# Parte 1 — apenas a modelagem das classes (sem menu):
-python desafio-parte_1.py
+# Instale as dependências e o pacote em modo editável
+pip install -e .
+```
 
-# Parte 2 — sistema completo e funcional:
-python desafio_parte_2.py
+> **Requisito:** Python 3.8 ou superior. A dependência `Pillow` é instalada automaticamente.
+
+---
+
+## Código-Fonte Detalhado
+
+### `__init__.py`
+
+O arquivo `__init__.py` é o que transforma o diretório `processamento_imagens/` em um **pacote Python**. Ele define a API pública do módulo, tornando as funções diretamente acessíveis a partir do namespace raiz do pacote — sem que o usuário precise conhecer a estrutura interna de arquivos.
+
+```python
+"""
+Pacote de processamento de imagens - exemplo para Test PyPI
+"""
+from .filtros import aplicar_filtro_pb
+from .transformacoes import redimensionar
+```
+
+**Como funciona:**
+
+- `from .filtros import aplicar_filtro_pb` → importação relativa: busca `filtros.py` dentro do próprio pacote (o ponto `.` representa o pacote atual).
+- `from .transformacoes import redimensionar` → idem para o módulo de transformações.
+
+**Benefício para o usuário:** em vez de escrever `from processamento_imagens.filtros import aplicar_filtro_pb`, basta:
+
+```python
+from processamento_imagens import aplicar_filtro_pb, redimensionar
 ```
 
 ---
 
-## ✅ Regras de Negócio
+### `filtros.py`
 
-- ✅ Cada cliente possui CPF único no sistema.
-- ✅ Um cliente pode ter mais de uma conta corrente.
-- ✅ Limite de **R$ 500,00** por operação de saque.
-- ✅ Máximo de **3 saques** por sessão.
-- ✅ Não é possível sacar mais do que o saldo disponível.
-- ✅ Todas as operações bem-sucedidas são registradas no histórico da conta com tipo, valor e data/hora.
-- ✅ Operações que falham **não são registradas** no histórico.
+Responsável pela aplicação de filtros de imagem. Atualmente implementa a conversão para **escala de cinza** (preto e branco).
 
----
+```python
+from PIL import Image
 
-## Conceitos POO Aplicados
+def aplicar_filtro_pb(caminho_entrada, caminho_saida):
+    """
+    Converte a imagem para preto e branco.
 
-| Conceito | Onde é aplicado |
-|----------|-----------------|
-| **Abstração** | Classe `Transacao` (ABC) define o contrato sem implementação |
-| **Encapsulamento** | Atributos `_saldo`, `_numero` etc. acessados via `@property` |
-| **Herança** | `PessoaFisica` ← `Cliente` / `ContaCorrente` ← `Conta` / `Saque`, `Deposito` ← `Transacao` |
-| **Polimorfismo** | `realizar_transacao` chama `registrar()` sem saber o tipo da transação |
-| **Factory method** | `Conta.nova_conta(cls, cliente, numero)` |
-| **`__str__`** | `ContaCorrente` define sua representação textual |
-| **`super()`** | Reaproveitamento do `__init__` e do método `sacar` da classe pai |
-| **List comprehension** | `filtrar_cliente`, contagem de saques em `ContaCorrente.sacar` |
-| **`@property`** | Getters somente-leitura para atributos encapsulados |
+    Parâmetros
+    ----------
+    caminho_entrada : str
+        Caminho para o arquivo de imagem de entrada (ex.: "foto.jpg").
+    caminho_saida : str
+        Caminho onde a imagem convertida será salva (ex.: "foto_pb.jpg").
 
----
+    Exemplo
+    -------
+    >>> aplicar_filtro_pb("green_forest.jpg", "green_forest_pb.jpg")
+    """
+    imagem = Image.open(caminho_entrada).convert("L")
+    imagem.save(caminho_saida)
+```
 
-## 📁 Arquivos do Projeto
+**Análise linha a linha:**
 
-| Arquivo | Descrição |
-|---------|-----------|
-| `desafio-parte_1.py` | Modelagem das classes (Parte 1 do desafio — sem menu) |
-| `desafio_parte_2.py` | Sistema completo com menu integrado às classes (Parte 2) |
-| `README.md` | Este arquivo |
+| Linha | Descrição |
+|---|---|
+| `from PIL import Image` | Importa a classe `Image` da biblioteca Pillow, ponto central de toda operação sobre imagens. |
+| `Image.open(caminho_entrada)` | Abre o arquivo de imagem e carrega seus dados em memória. Suporta JPG, PNG, BMP, TIFF e outros formatos. |
+| `.convert("L")` | Converte o modo de cor para **Luminance** (`"L"`), que é a escala de cinza de 8 bits (0 = preto, 255 = branco). Pillow aplica a fórmula padrão de luminância: `L = 0.299·R + 0.587·G + 0.114·B`. |
+| `imagem.save(caminho_saida)` | Grava a imagem processada em disco. O formato é inferido automaticamente pela extensão do arquivo. |
 
----
-
-## Certificado
-
-Certificado de conclusão disponível em: [https://hermes.dio.me/certificates/EXCY5DYB.pdf](https://hermes.dio.me/certificates/EXCY5DYB.pdf)
+> 🔬 **Detalhe técnico:** o modo `"L"` (Luminance) é diferente de `"1"` (bitmap binário, somente preto ou branco puro). `"L"` preserva os **256 tons de cinza**, produzindo resultados visualmente ricos.
 
 ---
 
-Referências: 
+### `transformacoes.py`
 
-- [Repositório de Estudos - Bootcamp Suzano Python Developer](https://github.com/ahaerdy/DIO-learning/tree/main/Suzano%20-%20Python%20Developer)
-- [Repositório de Estudos – Bootcamp NTT DATA - Engenharia de Dados com Python](https://github.com/ahaerdy/DIO-learning/tree/main/NTT%20DATA-Engenharia%20de%20Dados%20com%20Python#-reposit%C3%B3rio-de-estudos--bootcamp-ntt-data-engenharia-de-dados-com-python)
+Responsável por transformações geométricas na imagem. Atualmente implementa o **redimensionamento**.
+
+```python
+from PIL import Image
+
+def redimensionar(caminho_entrada, caminho_saida, largura, altura):
+    """
+    Redimensiona a imagem para a largura e altura especificadas.
+
+    Parâmetros
+    ----------
+    caminho_entrada : str
+        Caminho para o arquivo de imagem de entrada.
+    caminho_saida : str
+        Caminho onde a imagem redimensionada será salva.
+    largura : int
+        Largura desejada em pixels.
+    altura : int
+        Altura desejada em pixels.
+
+    Exemplo
+    -------
+    >>> redimensionar("green_forest.jpg", "green_forest_redim.jpg", 200, 200)
+    """
+    imagem = Image.open(caminho_entrada)
+    imagem = imagem.resize((largura, altura))
+    imagem.save(caminho_saida)
+```
+
+**Análise linha a linha:**
+
+| Linha | Descrição |
+|---|---|
+| `Image.open(caminho_entrada)` | Abre a imagem de entrada. |
+| `imagem.resize((largura, altura))` | Redimensiona para as dimensões especificadas (em pixels). O argumento é uma **tupla** `(width, height)`. Por padrão, Pillow usa o filtro `BICUBIC` para interpolação, garantindo boa qualidade visual. |
+| `imagem.save(caminho_saida)` | Salva a imagem resultante. |
+
+> ⚠️ **Atenção:** `resize()` **não** preserva a proporção (aspect ratio) automaticamente. Se as proporções originais forem diferentes das desejadas, a imagem ficará distorcida. Para preservar proporções, use `Image.thumbnail()` ou calcule as dimensões proporcionalmente antes de chamar `resize()`.
+
+---
+
+## Uso
+
+### Exemplo completo em Python
+
+```python
+from processamento_imagens import aplicar_filtro_pb, redimensionar
+
+# --- Filtro Preto e Branco ---
+aplicar_filtro_pb("green_forest.jpg", "green_forest_pb.jpg")
+print("Imagem convertida para preto e branco com sucesso!")
+
+# --- Redimensionamento ---
+redimensionar("green_forest.jpg", "green_forest_redim.jpg", 200, 200)
+print("Imagem redimensionada para 200×200 px com sucesso!")
+```
+
+### Execução via linha de comando (chamada direta do script de teste)
+
+```bash
+cd tests/
+python test_processamento_imagens_ahaerdy.py
+```
+
+**Saída esperada no terminal:**
+
+```
+Executando aplicar_filtro_pb...
+Arquivo 'green_forest_pb.jpg' criado com sucesso.
+Executando redimensionar...
+Arquivo 'green_forest_redim.jpg' criado com sucesso.
+```
+
+---
+
+## Testes
+
+O projeto conta com dois scripts de teste localizados na pasta `tests/`.
+
+### `test_basico.py`
+
+Teste de **sanidade de importação**: verifica se as funções do pacote são importadas corretamente e se são chamáveis (objetos do tipo função). Ideal para integração contínua (CI) com `pytest`.
+
+```python
+def test_imports():
+    from processamento_imagens import aplicar_filtro_pb, redimensionar
+    assert callable(aplicar_filtro_pb)
+    assert callable(redimensionar)
+```
+
+**Como executar:**
+
+```bash
+# Na raiz do projeto
+pytest tests/test_basico.py -v
+```
+
+**Saída esperada:**
+
+```
+tests/test_basico.py::test_imports PASSED     [100%]
+1 passed in 0.XXs
+```
+
+---
+
+### `test_processamento_imagens_ahaerdy.py`
+
+Teste **funcional de ponta a ponta**: executa as funções com arquivos reais de imagem e verifica se os arquivos de saída foram gerados no disco.
+
+```python
+import os
+from processamento_imagens import aplicar_filtro_pb, redimensionar
+
+def teste_funcional():
+    arquivo_entrada = "green_forest.jpg"
+    saida_pb        = "green_forest_pb.jpg"
+    saida_red       = "green_forest_redim.jpg"
+
+    # Verifica se o arquivo de entrada existe antes de prosseguir
+    if not os.path.exists(arquivo_entrada):
+        print(f"Arquivo de entrada '{arquivo_entrada}' não encontrado.")
+        return
+
+    # --- Teste do filtro preto e branco ---
+    print("Executando aplicar_filtro_pb...")
+    aplicar_filtro_pb(arquivo_entrada, saida_pb)
+    if os.path.exists(saida_pb):
+        print(f"Arquivo '{saida_pb}' criado com sucesso.")
+    else:
+        print(f"Falha ao criar '{saida_pb}'.")
+
+    # --- Teste do redimensionamento ---
+    print("Executando redimensionar...")
+    redimensionar(arquivo_entrada, saida_red, 200, 200)
+    if os.path.exists(saida_red):
+        print(f"Arquivo '{saida_red}' criado com sucesso.")
+    else:
+        print(f"Falha ao criar '{saida_red}'.")
+
+if __name__ == "__main__":
+    teste_funcional()
+```
+
+**Fluxo do teste:**
+
+```
+green_forest.jpg  ──►  aplicar_filtro_pb()  ──►  green_forest_pb.jpg
+green_forest.jpg  ──►  redimensionar()      ──►  green_forest_redim.jpg
+```
+
+**Como executar:**
+
+```bash
+cd tests/
+python test_processamento_imagens_ahaerdy.py
+```
+
+---
+
+## Resultados Visuais
+
+A seguir, a demonstração visual das transformações aplicadas sobre a imagem de entrada `green_forest.jpg`.
+
+### Imagem Original — `green_forest.jpg`
+
+> 📌 **Inserir aqui:** `tests/green_forest.jpg`
+
+![green_forest.jpg](tests/green_forest.jpg)
+
+*Imagem original colorida de uma floresta. Dimensões originais: 640×426 px (aprox.). Formato: JPEG.*
+
+---
+
+### Após `aplicar_filtro_pb()` — `green_forest_pb.jpg`
+
+> 📌 **Inserir aqui:** `tests/green_forest_pb.jpg`
+
+![green_forest_pb.jpg](tests/green_forest_pb.jpg)
+
+*Resultado da conversão para escala de cinza (modo `"L"` do Pillow). Observe que todos os canais RGB foram combinados em um único canal de luminância, preservando os 256 tons de cinza.*
+
+---
+
+### Após `redimensionar(200, 200)` — `green_forest_redim.jpg`
+
+> 📌 **Inserir aqui:** `tests/green_forest_redim.jpg`
+
+![green_forest_redim.jpg](tests/green_forest_redim.jpg)
+
+*Resultado do redimensionamento para 200×200 pixels. A proporção original foi alterada para caber nas dimensões especificadas.*
+
+---
+
+### Comparativo resumido
+
+| Arquivo | Operação | Modo de Cor | Dimensões |
+|---|---|---|---|
+| `green_forest.jpg` | — (original) | RGB | ~640×426 px |
+| `green_forest_pb.jpg` | `aplicar_filtro_pb()` | L (escala de cinza) | ~640×426 px (mantida) |
+| `green_forest_redim.jpg` | `redimensionar(200, 200)` | RGB | 200×200 px |
+
+---
+
+## Publicação no PyPI
+
+O pacote segue o fluxo padrão de distribuição recomendado pela Python Packaging Authority ([PyPA](https://packaging.python.org/)).
+
+### 1. Estrutura de empacotamento
+
+O `setup.py` (ou `pyproject.toml`) define os metadados do pacote:
+
+```python
+# setup.py (exemplo)
+from setuptools import setup, find_packages
+
+setup(
+    name="processamento-imagens",
+    version="0.1.0",
+    packages=find_packages(),
+    install_requires=["Pillow"],
+    author="ahaerdy",
+    description="Pacote Python para filtros e transformações de imagens",
+    long_description=open("README.md").read(),
+    long_description_content_type="text/markdown",
+    url="https://github.com/ahaerdy/processamento-imagens-ahaerdy",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    python_requires=">=3.8",
+)
+```
+
+### 2. Geração das distribuições
+
+```bash
+# Instala as ferramentas necessárias
+pip install build twine
+
+# Gera os arquivos de distribuição (sdist + wheel) na pasta dist/
+python -m build
+```
+
+Isso cria:
+```
+dist/
+├── processamento_imagens-0.1.0.tar.gz   # Source distribution (sdist)
+└── processamento_imagens-0.1.0-py3-none-any.whl  # Built distribution (wheel)
+```
+
+### 3. Publicação no Test PyPI (homologação)
+
+```bash
+# Faz upload para o ambiente de testes
+twine upload --repository testpypi dist/*
+```
+
+> Acesse [https://test.pypi.org/project/processamento-imagens/](https://test.pypi.org/project/processamento-imagens/) para verificar a página do pacote.
+
+### 4. Validação da instalação a partir do Test PyPI
+
+```bash
+pip install --index-url https://test.pypi.org/simple/ processamento-imagens
+```
+
+### 5. Publicação no PyPI oficial
+
+Após validação completa no ambiente de homologação:
+
+```bash
+twine upload dist/*
+```
+
+> Acesse [https://pypi.org/project/processamento-imagens/](https://pypi.org/project/processamento-imagens/) para confirmar a publicação.
+
+---
+
+## Referências
+
+- [Documentação oficial do Pillow](https://pillow.readthedocs.io/)
+- [Python Packaging User Guide — PyPA](https://packaging.python.org/en/latest/)
+- [Test PyPI](https://test.pypi.org/)
+- [PyPI](https://pypi.org/)
+- [DIO — Digital Innovation One](https://www.dio.me/)
+- [Repositório GitHub do projeto](https://github.com/ahaerdy/processamento-imagens-ahaerdy)
+
+---
+
+<p align="center">
+  Desenvolvido por <strong>ahaerdy</strong> · Projeto DIO · Python + Pillow + PyPI
+</p>
